@@ -1,0 +1,1406 @@
+{
+  "name": "Resume bot",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": "={{$json.id}}",
+        "options": {
+          "binaryPropertyName": "data"
+        }
+      },
+      "id": "2bc01e94-cbb7-458e-9f6f-92129c71e1f0",
+      "name": "Google Drive - Download Resume",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -608,
+        560
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YRJCAipIp7lCK87G",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $json.output;\n\nconst result =\n  typeof raw === 'string'\n    ? JSON.parse(raw)\n    : raw;\n\n// Get metadata from Google Drive search\nconst file = $('Google Drive - Download Resume').first().json;\n\n// Filename\nresult.FileName = file.name || 'resume.pdf';\n\n// Construct Google Drive link using the file ID\nresult.FileLink = file.id\n  ? `https://drive.google.com/file/d/${file.id}/view`\n  : '';\n\n// Make score numeric\nconst score = Number(result.total_score ?? 0);\nresult.total_score = score;\n\n// Route candidate\nif (score >= 65) {\n  result.route = 'passed';\n} else if (score >= 40) {\n  result.route = 'needs_review';\n} else {\n  result.route = 'failed';\n}\n\nreturn [{ json: result }];\n$('Google Drive - Download Resume').first().json.id"
+      },
+      "id": "910f3733-c4b0-42a0-9a9e-939e4def0562",
+      "name": "Parse AI JSON + Route",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1NtCljOD_WwzDxz5ik87WVY06fuOW7ZlFOTFgKcxsxbU",
+          "mode": "list",
+          "cachedResultName": "processed resumes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NtCljOD_WwzDxz5ik87WVY06fuOW7ZlFOTFgKcxsxbU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "analyzed",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NtCljOD_WwzDxz5ik87WVY06fuOW7ZlFOTFgKcxsxbU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Candidate": "={{ $json.candidate_name }}",
+            "Email": "={{ $json.email }}",
+            "Phone": "={{ $json.phone }}",
+            "Degree": "={{ $json.degree_detected }}",
+            "Location": "={{ $json.location_detected }}",
+            "Relocation": "={{ $json.relocate_detected }}",
+            "keywords_hit": "={{ $json.keywords_hit }}",
+            "degree_score": "={{ $json.degree_score }}",
+            "keywords_score": "={{ $json.keywords_score }}",
+            "experience_score": "={{ $json.experience_score }}",
+            "location_score": "={{ $json.location_score }}",
+            "relocate_score": "={{ $json.relocate_score }}",
+            "total_score": "={{ $json.total_score }}",
+            "Status": "={{ $json.status }}",
+            "FileName": "={{ $json.FileName }}",
+            "FileLink": "={{ $json.FileLink }}",
+            "route": "={{ $json.route }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Candidate",
+              "displayName": "Candidate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Degree",
+              "displayName": "Degree",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Relocation",
+              "displayName": "Relocation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "keywords_hit",
+              "displayName": "keywords_hit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "degree_score",
+              "displayName": "degree_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "keywords_score",
+              "displayName": "keywords_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "experience_score",
+              "displayName": "experience_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "location_score",
+              "displayName": "location_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "relocate_score",
+              "displayName": "relocate_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "total_score",
+              "displayName": "total_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FileName",
+              "displayName": "FileName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FileLink",
+              "displayName": "FileLink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "route",
+              "displayName": "route",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "33434d92-ad73-4294-baed-3095052f3e46",
+      "name": "Sheets - Append Analyzed",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        400,
+        768
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NTAghCBLcvdsQlAU",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.route}}",
+                    "rightValue": "failed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and",
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.route}}",
+                    "rightValue": "needs_review",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and",
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.route}}",
+                    "rightValue": "passed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and",
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "07109f6c-4981-424d-8246-abab6cf65a5e",
+      "name": "Switch - Candidate Status",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        704,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1NtCljOD_WwzDxz5ik87WVY06fuOW7ZlFOTFgKcxsxbU",
+          "mode": "list",
+          "cachedResultName": "processed resumes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NtCljOD_WwzDxz5ik87WVY06fuOW7ZlFOTFgKcxsxbU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1921363568,
+          "mode": "list",
+          "cachedResultName": "rejected",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NtCljOD_WwzDxz5ik87WVY06fuOW7ZlFOTFgKcxsxbU/edit#gid=1921363568"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Candidate": "="
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Candidate",
+              "displayName": "Candidate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Degree",
+              "displayName": "Degree",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Relocation",
+              "displayName": "Relocation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "keywords_hit",
+              "displayName": "keywords_hit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "degree_score",
+              "displayName": "degree_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "keywords_score",
+              "displayName": "keywords_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "experience_score",
+              "displayName": "experience_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "location_score",
+              "displayName": "location_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "relocate_score",
+              "displayName": "relocate_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "total_score",
+              "displayName": "total_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FileName",
+              "displayName": "FileName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FileLink",
+              "displayName": "FileLink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "route",
+              "displayName": "route",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "0d7b63b2-f810-4cdf-b2c3-7bf8589ef1d7",
+      "name": "Sheets - Append Failed",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1072,
+        448
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NTAghCBLcvdsQlAU",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1NtCljOD_WwzDxz5ik87WVY06fuOW7ZlFOTFgKcxsxbU",
+          "mode": "list",
+          "cachedResultName": "processed resumes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NtCljOD_WwzDxz5ik87WVY06fuOW7ZlFOTFgKcxsxbU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1116576893,
+          "mode": "list",
+          "cachedResultName": "review",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NtCljOD_WwzDxz5ik87WVY06fuOW7ZlFOTFgKcxsxbU/edit#gid=1116576893"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Candidate",
+              "displayName": "Candidate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Degree",
+              "displayName": "Degree",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Relocation",
+              "displayName": "Relocation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "keywords_hit",
+              "displayName": "keywords_hit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "degree_score",
+              "displayName": "degree_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "keywords_score",
+              "displayName": "keywords_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "experience_score",
+              "displayName": "experience_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "location_score",
+              "displayName": "location_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "relocate_score",
+              "displayName": "relocate_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "total_score",
+              "displayName": "total_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FileName",
+              "displayName": "FileName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FileLink",
+              "displayName": "FileLink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "route",
+              "displayName": "route",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "dca2aa86-02ab-4748-a415-2cf044d334ae",
+      "name": "Sheets - Append Needs Review",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1072,
+        624
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NTAghCBLcvdsQlAU",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1NtCljOD_WwzDxz5ik87WVY06fuOW7ZlFOTFgKcxsxbU",
+          "mode": "list",
+          "cachedResultName": "processed resumes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NtCljOD_WwzDxz5ik87WVY06fuOW7ZlFOTFgKcxsxbU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1722599812,
+          "mode": "list",
+          "cachedResultName": "shortlisted",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NtCljOD_WwzDxz5ik87WVY06fuOW7ZlFOTFgKcxsxbU/edit#gid=1722599812"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Candidate": "={{ $json.Candidate }}",
+            "Email": "={{ $json.Email }}",
+            "Degree": "={{ $json.Degree }}",
+            "Location": "={{ $json.Location }}",
+            "keywords_hit": "={{ $json.keywords_hit }}",
+            "degree_score": "={{ $json.degree_score }}",
+            "keywords_score": "={{ $json.keywords_score }}",
+            "experience_score": "={{ $json.experience_score }}",
+            "location_score": "={{ $json.location_score }}",
+            "relocate_score": "={{ $json.relocate_score }}",
+            "total_score": "={{ $json.total_score }}",
+            "Status": "={{ $json.Status }}",
+            "FileName": "={{ $json.FileName }}",
+            "FileLink": "={{ $json.FileLink }}",
+            "route": "={{ $json.route }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Candidate",
+              "displayName": "Candidate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Degree",
+              "displayName": "Degree",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Relocation",
+              "displayName": "Relocation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "keywords_hit",
+              "displayName": "keywords_hit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "degree_score",
+              "displayName": "degree_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "keywords_score",
+              "displayName": "keywords_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "experience_score",
+              "displayName": "experience_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "location_score",
+              "displayName": "location_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "relocate_score",
+              "displayName": "relocate_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "total_score",
+              "displayName": "total_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FileName",
+              "displayName": "FileName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FileLink",
+              "displayName": "FileLink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "route",
+              "displayName": "route",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "16991f01-352a-4665-b67c-9f2e6d7d25af",
+      "name": "Sheets - Append Passed",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1072,
+        816
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NTAghCBLcvdsQlAU",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "Shortlisted for the AI Intern position",
+        "emailType": "html",
+        "message": "=<!doctype html>\n<html><body style=\"font-family: Arial, Helvetica, sans-serif; font-size: 16px; color: #222; line-height: 1.6; margin: 0; padding: 16px;\">\n<p>Dear {{ $json.Candidate }},</p>\n<p>We are pleased to inform you that you have been shortlisted for the <strong>Job Title</strong> position at <strong>Company Name</strong>.</p>\n<p>Please use the following link to schedule your interview at a time that suits you:</p>\n<p><a href=\"meet.google.com\" target=\"_blank\" rel=\"noopener\">Schedule your interview on meet link</a></p>\n<p>Looking forward to meeting you!</p>\n<p>Best regards,<br />Recruiter Name.</p>\n</body></html> ",
+        "options": {}
+      },
+      "id": "e95c8806-179f-4257-ad0a-86dbef1ecbdc",
+      "name": "Gmail - Send Shortlisted Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1328,
+        816
+      ],
+      "webhookId": "6d51e20f-21a1-4231-8738-982508c9faf3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XN2iyljrLCaeJmrx",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -368,
+        608
+      ],
+      "id": "03078d5c-a0af-4401-93d5-d5c9494d48eb",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "C:\\Users\\devmu\\Desktop\\Projects\\Current-projects\\chat-v1\\backend\\gguf-models\\Qwen3.5-9B-Q4_K_M.gguf",
+          "mode": "list",
+          "cachedResultName": "C:\\Users\\devmu\\Desktop\\Projects\\Current-projects\\chat-v1\\backend\\gguf-models\\Qwen3.5-9B-Q4_K_M.gguf"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -176,
+        784
+      ],
+      "id": "6aed042c-94a6-4c65-9981-f9427fa14997",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "2gbsBhD7vjrqtufA",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "You are an ATS-style HR assistant. Read the resume text and return STRICT JSON ONLY that matches the schema below. Do not include any prose or markdown outside JSON. If a field is unknown, return null or [] as appropriate.\n\nSCORING RULES (0–100):\n- degree_score (0–30): AI/ML/DS degree → 30; CS with AI minor/honours/specialization → 20; else 0.\n- keywords_score (0–25): +5 each for presence of: LLM, RAG, chatbot, agent/agentic, GenAI (cap at 25).\n- experience_score (0–20): ≥3 years AI/ML → 20; 1–2 years → 10; internships/projects only → 5; else 0.\n- location_score (0–15): if location is Mumbai/Thane/Navi Mumbai/Pune/Maharashtra → 15; else 0.\n- relocate_score (0–10): if willingness to relocate is stated → 10; else 0.\ntotal_score = min(100, sum of the above).\nstatus: \"Shortlisted\" if total_score ≥ 65; \"Needs Review\" if 40–63; \"Rejected\" if < 40.\n\nJSON SCHEMA (return exactly these keys):\n{\n  \"candidate_name\": string|null,\n  \"email\": string|null,\n  \"phone\": string|null,\n  \"degree_detected\": string|null,            // e.g., \"B.Tech AI\", \"CS + AI minor\", etc.\n  \"location_detected\": string|null,          // best-guess location mention\n  \"relocate_detected\": boolean|null,         // true if resume states willingness to relocate\n  \"keywords_hit\": string[],                  // subset of [\"LLM\",\"RAG\",\"Chatbot\",\"Agent\",\"GenAI\"]\n  \"degree_score\": number,\n  \"keywords_score\": number,\n  \"experience_score\": number,\n  \"location_score\": number,\n  \"relocate_score\": number,\n  \"total_score\": number,\n  \"status\": \"Shortlisted\"|\"Needs Review\"|\"Rejected\"\n}\n\nHARD REQUIREMENTS:\n- Output MUST be valid JSON. No code fences, no commentary.\n- If multiple emails/phones are present, pick the most likely contact.\n- Use conservative pattern matching; avoid hallucinating fields not in the text."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -176,
+        640
+      ],
+      "id": "288a4923-f152-4935-a812-4b47877fdad1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1Mv19NmFIeXl0NLf3fyxkHXQJEa1FTaAZ",
+          "mode": "list",
+          "cachedResultName": "Resumes",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Mv19NmFIeXl0NLf3fyxkHXQJEa1FTaAZ"
+        },
+        "event": "fileCreated",
+        "options": {
+          "fileType": "all"
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1184,
+        304
+      ],
+      "id": "f5f994bf-4681-4968-8af0-b11816d54ea9",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YRJCAipIp7lCK87G",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -816,
+        480
+      ],
+      "id": "35179eb7-5168-4759-91ad-8a620eb8892b",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Google Drive - Download Resume').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Kvo0VFkloi6f3hUdxSErv59E2l0SX_7i",
+          "mode": "list",
+          "cachedResultName": "processed resumes",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Kvo0VFkloi6f3hUdxSErv59E2l0SX_7i"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        384,
+        592
+      ],
+      "id": "a2385c58-7925-43f5-93bf-b3653452b94d",
+      "name": "Move file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YRJCAipIp7lCK87G",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1Mv19NmFIeXl0NLf3fyxkHXQJEa1FTaAZ",
+            "mode": "list",
+            "cachedResultName": "Resumes",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1Mv19NmFIeXl0NLf3fyxkHXQJEa1FTaAZ"
+          },
+          "whatToSearch": "files"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1008,
+        400
+      ],
+      "id": "0a57ff7f-a54e-41a1-b1f3-94ab4ec0275c",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YRJCAipIp7lCK87G",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "Shortlisted for the AI Intern position",
+        "emailType": "html",
+        "message": "=<!doctype html>\n<html><body style=\"font-family: Arial, Helvetica, sans-serif; font-size: 16px; color: #222; line-height: 1.6; margin: 0; padding: 16px;\">\n<p>Dear {{ $json.Candidate }},</p>\n<p>Thank you for your interest in the position and for taking the time to apply. After careful consideration, we have decided not to move forward with your application at this stage. We truly appreciate your time and wish you all the best in your future opportunities..</p>\n<p>All the best!</p>\n<p>Best regards,<br />Recruiter Name</p>\n<p>Company Name </p>\n</body></html> ",
+        "options": {}
+      },
+      "id": "4f80df6f-3f5b-4ad6-9b71-38c0500ce53e",
+      "name": "Gmail - Send Rejected Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1264,
+        448
+      ],
+      "webhookId": "6d51e20f-21a1-4231-8738-982508c9faf3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XN2iyljrLCaeJmrx",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive - Download Resume": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI JSON + Route": {
+      "main": [
+        [
+          {
+            "node": "Move file",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sheets - Append Analyzed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets - Append Analyzed": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Switch - Candidate Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch - Candidate Status": {
+      "main": [
+        [
+          {
+            "node": "Sheets - Append Failed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sheets - Append Needs Review",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sheets - Append Passed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets - Append Passed": {
+      "main": [
+        [
+          {
+            "node": "Gmail - Send Shortlisted Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse AI JSON + Route",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Google Drive - Download Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets - Append Failed": {
+      "main": [
+        [
+          {
+            "node": "Gmail - Send Rejected Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e571b291-aafa-4237-befb-0925c8937e4e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e4197bbc34874dae8eddabec09687ffe111fd65ecec60e436f4aaa2afe34000c"
+  },
+  "nodeGroups": [],
+  "id": "DlQnRaZ0hgwlscCq",
+  "tags": []
+}
