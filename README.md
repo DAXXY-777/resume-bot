@@ -275,4 +275,4 @@ The automation handles repetitive screening tasks, while recruiters can focus on
 
 ## Disclaimer
 
-AI-generated resume scores should be treated as decision-support signals rather than the sole basis for employment decisions. The scoring criteria should be job-related, periodically reviewed for bias, and paired with appropriate human oversight.
+AI-generated resume scores should be treated as decision-support signals rather than the sole basis for employment decisions. The scoring criteria should be job-related, periodically reviewed for bias, and paired with appropriate human oversight The json parser must be evaluated based on your Job Description and have scoring metrics to your needs current workflow only builds a Draft mail for shortlisted candidates,To change Job Description look into AI agent.
